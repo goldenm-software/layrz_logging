@@ -4,14 +4,16 @@ import 'src/native.dart' if (dart.library.html) 'src/web.dart';
 
 class LayrzLogging {
   static void ensureInitialized() {
-    FlutterError.onError = (FlutterErrorDetails details) {
-      critical("${details.exceptionAsString()}\n${details.stack.toString()}");
-    };
+    initLogFile().then((_) {
+      FlutterError.onError = (FlutterErrorDetails details) {
+        critical("${details.exceptionAsString()}\n${details.stack.toString()}");
+      };
 
-    PlatformDispatcher.instance.onError = (error, stackTrace) {
-      critical("Platform error: $error\n$stackTrace");
-      return true;
-    };
+      PlatformDispatcher.instance.onError = (error, stackTrace) {
+        critical("Platform error: $error\n$stackTrace");
+        return true;
+      };
+    });
   }
 
   static List<Log> logs = [];
