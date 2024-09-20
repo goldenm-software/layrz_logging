@@ -8,10 +8,14 @@ import 'package:path_provider/path_provider.dart';
 Future<void> saveIntoFile(Log log) async {
   // Save log into a file
   final Directory directory = await getApplicationSupportDirectory();
-  final File file = File('${directory.path}/latest.log');
+  File file = File('${directory.path}/latest.log');
 
-  if (!file.existsSync()) {
-    file.createSync();
+  if (file.existsSync()) {
+    // Rename this file to "previous.log"
+    final File previousFile = File('${directory.path}/previous.log');
+    file.renameSync(previousFile.path);
+
+    file = File('${directory.path}/latest.log');
   }
 
   file.writeAsStringSync(
@@ -29,6 +33,12 @@ Future<void> openLogFile() async {
 
     debugPrint('Opening log file: ${file.path}');
     await OpenFile.open(file.path);
+
+    final File previousFile = File('${directory.path}/previous.log');
+    if (previousFile.existsSync()) {
+      debugPrint('Opening previous log file: ${previousFile.path}');
+      await OpenFile.open(previousFile.path);
+    }
   } catch (e) {
     debugPrint('Error opening log file: $e');
   }

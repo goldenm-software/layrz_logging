@@ -5,7 +5,7 @@ import 'src/native.dart' if (dart.library.html) 'src/web.dart';
 class LayrzLogging {
   static void ensureInitialized() {
     FlutterError.onError = (FlutterErrorDetails details) {
-      critical(details.toString());
+      critical("${details.exceptionAsString()}\n${details.stack.toString()}");
     };
 
     PlatformDispatcher.instance.onError = (error, stackTrace) {
