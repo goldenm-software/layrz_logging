@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.4
+
+- Added a conditional based on `kDebugMode` to prevent logs on console when is not in debug mode.
+- Opening the directory instead of two files when `openLogfile()` is called.
+
 ## 1.0.3
 
 - Fixes related to logfile handling.

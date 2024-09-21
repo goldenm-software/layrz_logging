@@ -39,7 +39,7 @@ class LayrzLogging {
   }
 
   static void log({required LogLevel level, required String message}) {
-    debugPrint("[$level] $message");
+    if (kDebugMode) debugPrint("[$level] $message");
     final log = Log(
       level: level,
       message: message,
