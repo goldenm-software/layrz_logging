@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.5
+
+- Lowered flutter version constraint to 3.22.0
+
 ## 1.0.4
 
 - Added a conditional based on `kDebugMode` to prevent logs on console when is not in debug mode.

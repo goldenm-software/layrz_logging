@@ -1,11 +1,11 @@
 name: layrz_logging
 description: "Logging handler for Layrz apps"
-version: "1.0.4"
+version: "1.0.5"
 homepage: https://github.com/goldenm-software/layrz_logging
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
-  flutter: '>=3.24.2'
+  flutter: '>=3.22.0'
 
 dependencies:
   flutter:
