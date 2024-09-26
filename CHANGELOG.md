@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+- Removed `open_file` dependency to support WASM compilation.
+
 ## 1.0.5
 
 - Lowered flutter version constraint to 3.22.0
