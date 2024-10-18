@@ -1,6 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:layrz_logging/src/models.dart';
+import 'package:layrz_theme/layrz_theme.dart';
 import 'src/native.dart' if (dart.library.html) 'src/web.dart';
+
+export 'src/models.dart';
+export 'src/preview.dart';
 
 class LayrzLogging {
   static void ensureInitialized() {
@@ -15,6 +19,8 @@ class LayrzLogging {
       };
     });
   }
+
+  static bool get isWeb => kThemedPlatform == ThemedPlatform.web;
 
   static List<Log> logs = [];
 
@@ -39,17 +45,20 @@ class LayrzLogging {
   }
 
   static void log({required LogLevel level, required String message}) {
-    if (kDebugMode) debugPrint("[$level] $message");
+    if (kDebugMode || isWeb) debugPrint("[$level] $message");
+
     final log = Log(
       level: level,
       message: message,
       timestamp: DateTime.now(),
     );
 
-    logs.add(log);
+    if (isWeb) {
+      logs.add(log);
 
-    if (logs.length > 50) {
-      logs.removeAt(0);
+      if (logs.length > 100) {
+        logs.removeAt(0);
+      }
     }
 
     saveIntoFile(log);
@@ -59,8 +68,16 @@ class LayrzLogging {
     return logs.map((e) => e.toString()).join("\n");
   }
 
-  static Future<void> openLogfile() async {
-    await openLogFile();
+  static Future<String?> openLogfile() async {
+    if (isWeb) throw UnsupportedError("This method is not supported on the web");
+    return openLogFile();
+  }
+
+  static Future<List<String>> fetchLogs() async {
+    if (isWeb) {
+      return logs.map((e) => e.toString()).toList();
+    }
+    return fetchLogsFromFile();
   }
 
   static void clean() {
