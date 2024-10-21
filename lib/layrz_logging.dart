@@ -53,15 +53,15 @@ class LayrzLogging {
       timestamp: DateTime.now(),
     );
 
-    if (isWeb) {
+    if (ThemedPlatform.isWeb) {
       logs.add(log);
 
       if (logs.length > 100) {
         logs.removeAt(0);
       }
+    } else {
+      saveIntoFile(log);
     }
-
-    saveIntoFile(log);
   }
 
   static String export() {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.9
+
+- Prevent call of `saveIntoFile` when is in Web.fl
+
 ## 1.0.8
 
 - Added new method to readLogs from the files created, and return a `List<String>`.
