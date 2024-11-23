@@ -1,17 +1,22 @@
+import 'package:flutter/foundation.dart';
 import 'package:layrz_logging/src/models.dart';
 
 Future<void> initLogFile() async {
-  throw UnsupportedError("This method is not supported on the web");
+  debugPrint("[layrz_logging] initLogFile(): This method is not supported on the web");
 }
 
 Future<void> saveIntoFile(Log log) async {
-  throw UnsupportedError("This method is not supported on the web");
+  debugPrint("[layrz_logging] saveIntoFile(): This method is not supported on the web");
 }
 
 Future<String?> openLogFile() async {
-  throw UnsupportedError("This method is not supported on the web");
+  debugPrint("[layrz_logging] openLogFile(): This method is not supported on the web");
+
+  return null;
 }
 
 Future<List<String>> fetchLogsFromFile() async {
-  throw UnsupportedError("This method is not supported on the web");
+  debugPrint("[layrz_logging] fetchLogsFromFile(): This method is not supported on the web");
+
+  return [];
 }
