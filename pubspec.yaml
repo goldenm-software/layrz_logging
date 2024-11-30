@@ -1,6 +1,6 @@
 name: layrz_logging
 description: "Logging handler for Layrz apps"
-version: "1.0.11"
+version: "1.0.12"
 homepage: https://github.com/goldenm-software/layrz_logging
 
 environment:

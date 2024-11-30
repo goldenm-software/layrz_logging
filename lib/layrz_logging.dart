@@ -20,7 +20,7 @@ class LayrzLogging {
     });
   }
 
-  static bool get isWeb => kThemedPlatform == ThemedPlatform.web;
+  static bool get isWeb => ThemedPlatform.isWeb || ThemedPlatform.isWebWasm;
 
   static List<Log> logs = [];
 
@@ -53,7 +53,7 @@ class LayrzLogging {
       timestamp: DateTime.now(),
     );
 
-    if (ThemedPlatform.isWeb) {
+    if (isWeb) {
       logs.add(log);
 
       if (logs.length > 100) {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.12
+
+- Removed all debugPrint messages of not supported on web platform.
+
 ## 1.0.11
 
 - Replaced `dart.library.html` to `dart.library.js_interop` to fully support Web WASM.
