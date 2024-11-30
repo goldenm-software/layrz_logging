@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.11
+
+- Replaced `dart.library.html` to `dart.library.js_interop` to fully support Web WASM.
+
 ## 1.0.9
 
 - Prevent call of `saveIntoFile` when is in Web.fl

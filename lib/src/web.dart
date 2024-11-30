@@ -11,12 +11,10 @@ Future<void> saveIntoFile(Log log) async {
 
 Future<String?> openLogFile() async {
   debugPrint("[layrz_logging] openLogFile(): This method is not supported on the web");
-
   return null;
 }
 
 Future<List<String>> fetchLogsFromFile() async {
   debugPrint("[layrz_logging] fetchLogsFromFile(): This method is not supported on the web");
-
   return [];
 }
