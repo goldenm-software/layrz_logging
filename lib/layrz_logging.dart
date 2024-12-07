@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:layrz_logging/src/models.dart';
 import 'package:layrz_theme/layrz_theme.dart';
-import 'src/native.dart' if (dart.library.html) 'src/web.dart';
+import 'src/native.dart' if (dart.library.js_interop) 'src/web.dart';
 
 export 'src/models.dart';
 export 'src/preview.dart';
@@ -20,7 +20,7 @@ class LayrzLogging {
     });
   }
 
-  static bool get isWeb => kThemedPlatform == ThemedPlatform.web;
+  static bool get isWeb => ThemedPlatform.isWeb || ThemedPlatform.isWebWasm;
 
   static List<Log> logs = [];
 
@@ -53,7 +53,7 @@ class LayrzLogging {
       timestamp: DateTime.now(),
     );
 
-    if (ThemedPlatform.isWeb) {
+    if (isWeb) {
       logs.add(log);
 
       if (logs.length > 100) {

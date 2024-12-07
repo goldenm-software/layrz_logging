@@ -1,17 +1,6 @@
 import 'package:layrz_logging/src/models.dart';
 
-Future<void> initLogFile() async {
-  throw UnsupportedError("This method is not supported on the web");
-}
-
-Future<void> saveIntoFile(Log log) async {
-  throw UnsupportedError("This method is not supported on the web");
-}
-
-Future<String?> openLogFile() async {
-  throw UnsupportedError("This method is not supported on the web");
-}
-
-Future<List<String>> fetchLogsFromFile() async {
-  throw UnsupportedError("This method is not supported on the web");
-}
+Future<void> initLogFile() async {}
+Future<void> saveIntoFile(Log log) async {}
+Future<String?> openLogFile() async => null;
+Future<List<String>> fetchLogsFromFile() async => [];
