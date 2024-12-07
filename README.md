@@ -1,25 +1,70 @@
-# Layrz Logging
+# layrz_logging
 
-Managed by <b>Golden M, Inc.</b> with authorization of <b>Layrz Limited</b>
+[![Pub version](https://img.shields.io/pub/v/layrz_logging?logo=flutter)](https://pub.dev/packages/layrz_logging)
+[![popularity](https://img.shields.io/pub/popularity/layrz_logging?logo=flutter)](https://pub.dev/packages/layrz_logging/score)
+[![likes](https://img.shields.io/pub/likes/layrz_logging?logo=flutter)](https://pub.dev/packages/layrz_logging/score)
+[![GitHub license](https://img.shields.io/github/license/goldenm-software/layrz_logging?logo=github)](https://github.com/goldenm-software/layrz_logging)
 
-## Description
 Managing errors and logs can be a pain, but with `layrz_logging` you can easily manage your logs and errors in your Flutter applications.
 Supports all of the platforms that Flutter supports, and also includes an special support for Native platforms, saving the logs in a log file.
 
-## Do you have other libraries?
-Of course! We have multiple libraries (for Layrz or general purpose) that you can use in your projects, you can find us on [PyPi](https://pypi.org/user/goldenm/) for Python libraries, [RubyGems](https://rubygems.org/profiles/goldenm) for Ruby gems, [NPM of Golden M](https://www.npmjs.com/~goldenm) or [NPM of Layrz](https://www.npmjs.com/~layrz-software) for NodeJS libraries or here in [Pub.dev](https://pub.dev/publishers/goldenm.com/packages) for Dart/Flutter libraries.
+## Usage
+To use this plugin, add `layrz_logging` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
 
-## How can I get support if I have a problem?
-Usually our inline documentation helps you to understand how to use our libraries, but if you have a problem, you can create an Issue in our [Repository](https://github.com/goldenm-software/layrz_logging) or contact us at [support@goldenm.com](mailto:support@goldenm.com)
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  layrz_logging: ^latest_version
+```
 
-## I need to pay for this library?
-<b>No!</b> This library is free and open source, you can use it in your projects without any cost, but if you want to support us, give us a thumbs up here in `pub.dev`!
+Then you can import the package in your Dart code:
 
-## How can I contribute?
-Feel free to create a Pull Request on our [Repository](https://github.com/goldenm-software/layrz_logging) or create an Issue if you find a bug or have a suggestion.
+```dart
+import 'package:layrz_logging/layrz_logging.dart';
 
-## Who are you?
-<b>Golden M</b> is a software/hardware development company what is working on a new, innovative and disruptive technologies. For more information, contact us at [sales@goldenm.com](mailto:sales@goldenm.com)
+/// on your void main() function
+void main() {
+  WidgetsBindingInstance.ensureInitialized();
+  LayrzLogging.ensureInitialized(); // Be careful, this method should be invoked after `WidgetsBindingInstance.ensureInitialized()`
+
+  runApp(MyApp());
+}
+
+/// And, wherever you want to log something
+LayrzLogging.debug("Hello, World!"); // Debug error level
+LayrzLogging.info("Hello, World!"); // Info error level
+LayrzLogging.warning("Hello, World!"); // Warning error level
+LayrzLogging.error("Hello, World!"); // Error error level
+LayrzLogging.fatal("Hello, World!"); // Fatal error level
+
+/// Also, LayrzLogging is capable to handle all flutter or platform-specific errors without doing anything
+
+/// You can also get the logs
+///
+/// On native platforms (Android, iOS, macOS, Windows, Linux) the logs are saved in a file
+/// On web platform, the logs are stored on an `List`, and limited to 100 records
+List<String> logs = await LayrzLogging.fetchLogs();
+```
+
+## FAQ
+
+### Why is this package called `layrz_logging`?
+All packages developed by [Layrz](https://layrz.com) are prefixed with `layrz_`, check out our other packages on [pub.dev](https://pub.dev/publishers/goldenm.com/packages).
+
+### I need to pay to use this package?
+<b>No!</b> This library is free and open source, you can use it in your projects without any cost, but if you want to support us, give us a thumbs up here in [pub.dev](https://pub.dev/packages/layrz_logging) and star our [Repository](https://github.com/goldenm-software/layrz_logging)!
+
+### Can I contribute to this package?
+<b>Yes!</b> We are open to contributions, feel free to open a pull request or an issue on the [Repository](https://github.com/goldenm-software/layrz_logging)!
+
+### I have a question, how can I contact you?
+If you need more assistance, you open an issue on the [Repository](https://github.com/goldenm-software/layrz_logging) and we're happy to help you :)
 
 ## License
-This project is under <b>MIT License</b>, for more information, check out the `LICENCE`
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+This project is maintained by [Golden M](https://goldenm.com) with authorization of [Layrz LTD](https://layrz.com).
+
+## Who are you? / Want to work with us?
+<b>Golden M</b> is a software and hardware development company what is working on a new, innovative and disruptive technologies. For more information, contact us at [sales@goldenm.com](mailto:sales@goldenm.com) or via WhatsApp at [+(507)-6979-3073](https://wa.me/50769793073?text="From%20layrz_logging%20flutter%20library.%20Hello").
