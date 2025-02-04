@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:layrz_logging/src/models.dart';
+import 'package:layrz_logging/src/utils.dart';
 import 'package:layrz_theme/layrz_theme.dart';
 import 'src/native.dart' if (dart.library.js_interop) 'src/web.dart';
 
@@ -9,6 +10,7 @@ export 'src/preview.dart';
 class LayrzLogging {
   static void ensureInitialized() {
     initLogFile().then((_) {
+      LayrzLoggingUtils.initialized = true;
       FlutterError.onError = (FlutterErrorDetails details) {
         critical("${details.exceptionAsString()}\n${details.stack.toString()}");
       };
@@ -69,11 +71,13 @@ class LayrzLogging {
   }
 
   static Future<String?> openLogfile() async {
+    if (!LayrzLoggingUtils.initialized) return null;
     if (isWeb) throw UnsupportedError("This method is not supported on the web");
     return openLogFile();
   }
 
   static Future<List<String>> fetchLogs() async {
+    if (!LayrzLoggingUtils.initialized) return [];
     if (isWeb) {
       return logs.map((e) => e.toString()).toList();
     }

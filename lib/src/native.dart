@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:layrz_logging/src/models.dart';
+import 'package:layrz_logging/src/utils.dart';
 import 'package:layrz_theme/layrz_theme.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -22,6 +23,7 @@ Future<void> initLogFile() async {
 }
 
 Future<void> saveIntoFile(Log log) async {
+  if (!LayrzLoggingUtils.initialized) return;
   // Save log into a file
   final Directory directory = await getApplicationDocumentsDirectory();
   File file = File('${directory.path}/latest.log');
@@ -33,6 +35,7 @@ Future<void> saveIntoFile(Log log) async {
 }
 
 Future<String?> openLogFile() async {
+  if (!LayrzLoggingUtils.initialized) return null;
   try {
     final lines = await fetchLogsFromFile();
 
@@ -59,6 +62,7 @@ Future<String?> openLogFile() async {
 }
 
 Future<List<String>> fetchLogsFromFile() async {
+  if (!LayrzLoggingUtils.initialized) return [];
   List<String> lines = [];
 
   try {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.14
+
+- Added support for non-initalized `LayrzLogging` instance.
+
 ## 1.0.13
 
 - Updated README.md with examples
