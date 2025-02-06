@@ -20,8 +20,9 @@ class LoggingDb extends _$LoggingDb {
                 sqlite3Wasm: Uri.parse('https://cdn.layrz.com/utils/sqlite3.wasm'),
                 driftWorker: Uri.parse('https://cdn.layrz.com/utils/drift_worker.js'),
                 onResult: (result) {
+                  debugPrint("Using Drift Web implementation ${result.chosenImplementation}");
                   if (result.missingFeatures.isNotEmpty) {
-                    debugPrint('Missing features: ${result.missingFeatures}');
+                    debugPrint('Missing features detected => ${result.missingFeatures}');
                   }
                 },
               ),
