@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:layrz_icons/layrz_icons.dart';
 import 'package:layrz_models/layrz_models.dart';
 import 'package:layrz_theme/layrz_theme.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class PreviewLogDialog extends StatelessWidget {
   final List<String> lines;
-  const PreviewLogDialog({
-    super.key,
-    required this.lines,
-  });
+  const PreviewLogDialog({super.key, required this.lines});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +58,7 @@ class PreviewLogDialog extends StatelessWidget {
                 ThemedButton(
                   labelText: copyText,
                   color: Colors.orange,
-                  icon: MdiIcons.contentCopy,
+                  icon: LayrzIcons.solarOutlineClipboard,
                   onTap: () async {
                     await Clipboard.setData(ClipboardData(text: lines.join('\n')));
                     if (!context.mounted) return;
@@ -71,7 +68,7 @@ class PreviewLogDialog extends StatelessWidget {
                         SnackBar(
                           content: Row(
                             children: [
-                              Icon(MdiIcons.contentCopy, color: Colors.white),
+                              Icon(LayrzIcons.solarOutlineClipboard, color: Colors.white),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
@@ -90,7 +87,7 @@ class PreviewLogDialog extends StatelessWidget {
                     } else {
                       ThemedSnackbarMessenger.of(context).showSnackbar(ThemedSnackbar(
                         message: copiedToClipboardText,
-                        icon: MdiIcons.contentCopy,
+                        icon: LayrzIcons.solarOutlineClipboard,
                         color: Colors.orange,
                         duration: const Duration(seconds: 3),
                       ));

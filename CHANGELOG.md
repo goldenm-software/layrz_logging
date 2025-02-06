@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Migrated to use `drift` instead of classic files and lists to store logs.
+
 ## 1.0.14
 
 - Added support for non-initalized `LayrzLogging` instance.

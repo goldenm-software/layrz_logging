@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          databases:
+            logging_db: lib/src/database/database.dart

@@ -6,7 +6,7 @@
 [![GitHub license](https://img.shields.io/github/license/goldenm-software/layrz_logging?logo=github)](https://github.com/goldenm-software/layrz_logging)
 
 Managing errors and logs can be a pain, but with `layrz_logging` you can easily manage your logs and errors in your Flutter applications.
-Supports all of the platforms that Flutter supports, and also includes an special support for Native platforms, saving the logs in a log file.
+Supports all of the platforms that Flutter supports.
 
 ## Usage
 To use this plugin, add `layrz_logging` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).

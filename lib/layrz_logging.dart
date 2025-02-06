@@ -1,25 +1,37 @@
 import 'package:flutter/foundation.dart';
 import 'package:layrz_logging/src/models.dart';
-import 'package:layrz_logging/src/utils.dart';
 import 'package:layrz_theme/layrz_theme.dart';
-import 'src/native.dart' if (dart.library.js_interop) 'src/web.dart';
+
+import 'src/database/database.dart';
 
 export 'src/models.dart';
 export 'src/preview.dart';
 
 class LayrzLogging {
-  static void ensureInitialized() {
-    initLogFile().then((_) {
-      LayrzLoggingUtils.initialized = true;
-      FlutterError.onError = (FlutterErrorDetails details) {
-        critical("${details.exceptionAsString()}\n${details.stack.toString()}");
-      };
+  /// [initialized] is used to ensure that the logging system is initialized only once.
+  static bool initialized = false;
 
-      PlatformDispatcher.instance.onError = (error, stackTrace) {
-        critical("Platform error: $error\n$stackTrace");
-        return true;
-      };
-    });
+  /// [_db] is used to store logs in the database.
+  static LoggingDb? _db;
+
+  /// [ensureInitialized] is used to initialize the logging system.
+  static void ensureInitialized() {
+    LayrzLogging.initialized = true;
+    FlutterError.onError = (FlutterErrorDetails details) {
+      critical("${details.exceptionAsString()}\n${details.stack.toString()}");
+    };
+
+    PlatformDispatcher.instance.onError = (error, stackTrace) {
+      critical("Platform error: $error\n$stackTrace");
+      return true;
+    };
+
+    try {
+      _db = LoggingDb();
+    } catch (e) {
+      _db = null;
+      debugPrint("Error initializing database: $e");
+    }
   }
 
   static bool get isWeb => ThemedPlatform.isWeb || ThemedPlatform.isWebWasm;
@@ -55,36 +67,43 @@ class LayrzLogging {
       timestamp: DateTime.now(),
     );
 
-    if (isWeb) {
-      logs.add(log);
-
-      if (logs.length > 100) {
-        logs.removeAt(0);
+    if (_db != null) {
+      try {
+        _db!.into(_db!.record).insert(RecordCompanion.insert(
+              logLevel: log.level.name.toUpperCase(),
+              entry: log.message,
+            ));
+      } catch (e) {
+        logs.add(log);
       }
     } else {
-      saveIntoFile(log);
+      logs.add(log);
     }
   }
 
-  static String export() {
-    return logs.map((e) => e.toString()).join("\n");
-  }
-
-  static Future<String?> openLogfile() async {
-    if (!LayrzLoggingUtils.initialized) return null;
-    if (isWeb) throw UnsupportedError("This method is not supported on the web");
-    return openLogFile();
-  }
-
-  static Future<List<String>> fetchLogs() async {
-    if (!LayrzLoggingUtils.initialized) return [];
-    if (isWeb) {
-      return logs.map((e) => e.toString()).toList();
-    }
-    return fetchLogsFromFile();
-  }
-
-  static void clean() {
+  static Future<List<String>> retreiveLogs() async {
+    List<Log> logList = [...logs];
     logs.clear();
+    if (_db != null) {
+      final rows = await _db!.select(_db!.record).get();
+      await _db!.delete(_db!.record).go();
+      logList.addAll(rows.map((e) {
+        return Log(
+          level: LogLevel.values.firstWhere(
+            (element) => element.name == e.logLevel.toLowerCase(),
+            orElse: () => LogLevel.info,
+          ),
+          message: e.entry,
+          timestamp: e.createdAt,
+        );
+      }));
+    }
+
+    return compute(_sortAndFormat, logList);
   }
+}
+
+Future<List<String>> _sortAndFormat(List<Log> logs) async {
+  logs.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+  return logs.map((e) => "[${e.timestamp}] ${e.level.name.toUpperCase()}: ${e.message}").toList();
 }
