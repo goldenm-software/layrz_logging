@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:layrz_icons/layrz_icons.dart';
-import 'package:layrz_models/layrz_models.dart';
 import 'package:layrz_theme/layrz_theme.dart';
 
 class PreviewLogDialog extends StatelessWidget {
@@ -50,8 +49,8 @@ class PreviewLogDialog extends StatelessWidget {
                   child: Text(
                     titleText,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -74,8 +73,8 @@ class PreviewLogDialog extends StatelessWidget {
                                 child: Text(
                                   copiedToClipboardText,
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: Colors.white,
-                                      ),
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ],
@@ -85,12 +84,14 @@ class PreviewLogDialog extends StatelessWidget {
                         ),
                       );
                     } else {
-                      ThemedSnackbarMessenger.of(context).showSnackbar(ThemedSnackbar(
-                        message: copiedToClipboardText,
-                        icon: LayrzIcons.solarOutlineClipboard,
-                        color: Colors.orange,
-                        duration: const Duration(seconds: 3),
-                      ));
+                      ThemedSnackbarMessenger.of(context).showSnackbar(
+                        ThemedSnackbar(
+                          message: copiedToClipboardText,
+                          icon: LayrzIcons.solarOutlineClipboard,
+                          color: Colors.orange,
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
                     }
                   },
                 ),
