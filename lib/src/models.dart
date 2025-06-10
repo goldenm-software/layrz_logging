@@ -20,8 +20,7 @@ enum LogLevel {
   info,
   warning,
   error,
-  critical,
-  ;
+  critical;
 
   @override
   String toString() {

@@ -69,10 +69,14 @@ class LayrzLogging {
 
     if (_db != null) {
       try {
-        _db!.into(_db!.record).insert(RecordCompanion.insert(
-              logLevel: log.level.name.toUpperCase(),
-              entry: log.message,
-            ));
+        _db!
+            .into(_db!.record)
+            .insert(
+              RecordCompanion.insert(
+                logLevel: log.level.name.toUpperCase(),
+                entry: log.message,
+              ),
+            );
       } catch (e) {
         logs.add(log);
       }
@@ -87,16 +91,18 @@ class LayrzLogging {
     if (_db != null) {
       final rows = await _db!.select(_db!.record).get();
       await _db!.delete(_db!.record).go();
-      logList.addAll(rows.map((e) {
-        return Log(
-          level: LogLevel.values.firstWhere(
-            (element) => element.name == e.logLevel.toLowerCase(),
-            orElse: () => LogLevel.info,
-          ),
-          message: e.entry,
-          timestamp: e.createdAt,
-        );
-      }));
+      logList.addAll(
+        rows.map((e) {
+          return Log(
+            level: LogLevel.values.firstWhere(
+              (element) => element.name == e.logLevel.toLowerCase(),
+              orElse: () => LogLevel.info,
+            ),
+            message: e.entry,
+            timestamp: e.createdAt,
+          );
+        }),
+      );
     }
 
     return compute(_sortAndFormat, logList);
@@ -105,5 +111,22 @@ class LayrzLogging {
 
 Future<List<String>> _sortAndFormat(List<Log> logs) async {
   logs.sort((a, b) => a.timestamp.compareTo(b.timestamp));
-  return logs.map((e) => "[${e.timestamp}] ${e.level.name.toUpperCase()}: ${e.message}").toList();
+  return logs.map((e) {
+    final date = e.timestamp.toUtc();
+    String timestamp = [
+      '${date.year}',
+      date.month.toString().padLeft(2, '0'),
+      date.day.toString().padLeft(2, '0'),
+    ].join('-');
+
+    timestamp += ' ';
+
+    timestamp += [
+      date.hour.toString().padLeft(2, '0'),
+      date.minute.toString().padLeft(2, '0'),
+      date.second.toString().padLeft(2, '0'),
+    ].join(':');
+
+    return "[$timestamp] ${e.level.name.toUpperCase()}: ${e.message}";
+  }).toList();
 }
