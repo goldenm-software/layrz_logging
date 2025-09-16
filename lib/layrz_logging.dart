@@ -1,28 +1,42 @@
 import 'package:flutter/foundation.dart';
 import 'package:layrz_logging/src/models.dart';
 import 'package:layrz_theme/layrz_theme.dart';
-import 'src/native.dart' if (dart.library.js_interop) 'src/web.dart';
+
+import 'src/database/database.dart';
 
 export 'src/models.dart';
 export 'src/preview.dart';
 
-class LayrzLogging {
-  static void ensureInitialized() {
-    initLogFile().then((_) {
-      FlutterError.onError = (FlutterErrorDetails details) {
-        critical("${details.exceptionAsString()}\n${details.stack.toString()}");
-      };
+class Log {
+  /// [initialized] is used to ensure that the logging system is initialized only once.
+  static bool initialized = false;
 
-      PlatformDispatcher.instance.onError = (error, stackTrace) {
-        critical("Platform error: $error\n$stackTrace");
-        return true;
-      };
-    });
+  /// [_db] is used to store logs in the database.
+  static LoggingDb? _db;
+
+  /// [ensureInitialized] is used to initialize the logging system.
+  static void ensureInitialized() {
+    Log.initialized = true;
+    FlutterError.onError = (FlutterErrorDetails details) {
+      critical("${details.exceptionAsString()}\n${details.stack.toString()}");
+    };
+
+    PlatformDispatcher.instance.onError = (error, stackTrace) {
+      critical("Platform error: $error\n$stackTrace");
+      return true;
+    };
+
+    try {
+      _db = LoggingDb();
+    } catch (e) {
+      _db = null;
+      debugPrint("Error initializing database: $e");
+    }
   }
 
   static bool get isWeb => ThemedPlatform.isWeb || ThemedPlatform.isWebWasm;
 
-  static List<Log> logs = [];
+  static List<LogEntry> logs = [];
 
   static void debug(String message) {
     log(level: LogLevel.debug, message: message);
@@ -47,40 +61,96 @@ class LayrzLogging {
   static void log({required LogLevel level, required String message}) {
     if (kDebugMode || isWeb) debugPrint("[$level] $message");
 
-    final log = Log(
+    final log = LogEntry(
       level: level,
       message: message,
       timestamp: DateTime.now(),
     );
 
-    if (isWeb) {
-      logs.add(log);
-
-      if (logs.length > 100) {
-        logs.removeAt(0);
+    if (_db != null) {
+      try {
+        _db!
+            .into(_db!.record)
+            .insert(
+              RecordCompanion.insert(
+                logLevel: log.level.name.toUpperCase(),
+                entry: log.message,
+              ),
+            );
+      } catch (e) {
+        logs.add(log);
       }
     } else {
-      saveIntoFile(log);
+      logs.add(log);
     }
   }
 
-  static String export() {
-    return logs.map((e) => e.toString()).join("\n");
-  }
-
-  static Future<String?> openLogfile() async {
-    if (isWeb) throw UnsupportedError("This method is not supported on the web");
-    return openLogFile();
-  }
-
-  static Future<List<String>> fetchLogs() async {
-    if (isWeb) {
-      return logs.map((e) => e.toString()).toList();
-    }
-    return fetchLogsFromFile();
-  }
-
-  static void clean() {
+  static Future<List<String>> retreiveLogs() async {
+    List<LogEntry> logList = [...logs];
     logs.clear();
+    if (_db != null) {
+      final rows = await _db!.select(_db!.record).get();
+      await _db!.delete(_db!.record).go();
+      logList.addAll(
+        rows.map((e) {
+          return LogEntry(
+            level: LogLevel.values.firstWhere(
+              (element) => element.name == e.logLevel.toLowerCase(),
+              orElse: () => LogLevel.info,
+            ),
+            message: e.entry,
+            timestamp: e.createdAt,
+          );
+        }),
+      );
+    }
+
+    return compute(_sortAndFormat, logList);
   }
+
+  /// [humanizeMicroseconds] is used to convert microseconds to a human-readable format.
+  ///
+  /// Examples:
+  /// - 500 -> "500μs"
+  /// - 1500 -> "1ms"
+  static String humanizeMicroseconds(int elapsed) {
+    if (elapsed < 1_000) {
+      return '$elapsedμs';
+    }
+    elapsed = elapsed ~/ 1_000;
+    if (elapsed < 1_000) {
+      return '${elapsed}ms';
+    }
+
+    elapsed = elapsed ~/ 1_000;
+    if (elapsed < 60) {
+      return '${elapsed}s';
+    }
+
+    elapsed = elapsed ~/ 60;
+    return '${elapsed}m';
+  }
+}
+
+typedef LayrzLogging = Log;
+Future<List<String>> _sortAndFormat(List<LogEntry> logs) async {
+  logs.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+  return logs.map((e) {
+    final date = e.timestamp.toUtc();
+    String timestamp = [
+      '${date.year}',
+      date.month.toString().padLeft(2, '0'),
+      date.day.toString().padLeft(2, '0'),
+    ].join('-');
+
+    timestamp += ' ';
+
+    timestamp += [
+      date.hour.toString().padLeft(2, '0'),
+      date.minute.toString().padLeft(2, '0'),
+      date.second.toString().padLeft(2, '0'),
+    ].join(':');
+
+    return "[$timestamp] ${e.level.name.toUpperCase()}: ${e.message}";
+  }).toList();
 }

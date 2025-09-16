@@ -1,9 +1,9 @@
-class Log {
+class LogEntry {
   String message;
   LogLevel level;
   DateTime timestamp;
 
-  Log({
+  LogEntry({
     required this.message,
     required this.level,
     required this.timestamp,
@@ -20,8 +20,7 @@ enum LogLevel {
   info,
   warning,
   error,
-  critical,
-  ;
+  critical;
 
   @override
   String toString() {

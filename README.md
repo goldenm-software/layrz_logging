@@ -6,7 +6,7 @@
 [![GitHub license](https://img.shields.io/github/license/goldenm-software/layrz_logging?logo=github)](https://github.com/goldenm-software/layrz_logging)
 
 Managing errors and logs can be a pain, but with `layrz_logging` you can easily manage your logs and errors in your Flutter applications.
-Supports all of the platforms that Flutter supports, and also includes an special support for Native platforms, saving the logs in a log file.
+Supports all of the platforms that Flutter supports.
 
 ## Usage
 To use this plugin, add `layrz_logging` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
@@ -26,25 +26,32 @@ import 'package:layrz_logging/layrz_logging.dart';
 /// on your void main() function
 void main() {
   WidgetsBindingInstance.ensureInitialized();
-  LayrzLogging.ensureInitialized(); // Be careful, this method should be invoked after `WidgetsBindingInstance.ensureInitialized()`
+  Log.ensureInitialized(); // Be careful, this method should be invoked after `WidgetsBindingInstance.ensureInitialized()`
 
   runApp(MyApp());
 }
 
 /// And, wherever you want to log something
-LayrzLogging.debug("Hello, World!"); // Debug error level
-LayrzLogging.info("Hello, World!"); // Info error level
-LayrzLogging.warning("Hello, World!"); // Warning error level
-LayrzLogging.error("Hello, World!"); // Error error level
-LayrzLogging.fatal("Hello, World!"); // Fatal error level
+Log.debug("Hello, World!"); // Debug error level
+Log.info("Hello, World!"); // Info error level
+Log.warning("Hello, World!"); // Warning error level
+Log.error("Hello, World!"); // Error error level
+Log.fatal("Hello, World!"); // Fatal error level
 
-/// Also, LayrzLogging is capable to handle all flutter or platform-specific errors without doing anything
+/// Also, Log is capable to handle all flutter or platform-specific errors without doing anything
 
 /// You can also get the logs
 ///
 /// On native platforms (Android, iOS, macOS, Windows, Linux) the logs are saved in a file
 /// On web platform, the logs are stored on an `List`, and limited to 100 records
-List<String> logs = await LayrzLogging.fetchLogs();
+List<String> logs = await Log.fetchLogs();
+
+/// If you upgraded from v1.1 or below, the LayrzLogging class is still exists, but on backward compatibility mode
+LayrzLogging.debug("Hello, World!"); // Debug error level
+LayrzLogging.info("Hello, World!"); // Info error level
+LayrzLogging.warning("Hello, World!"); // Warning error level
+LayrzLogging.error("Hello, World!"); // Error error level
+LayrzLogging.fatal("Hello, World!"); // Fatal error level
 ```
 
 ## FAQ
