@@ -7,7 +7,7 @@ import 'src/database/database.dart';
 export 'src/models.dart';
 export 'src/preview.dart';
 
-class LayrzLogging {
+class Log {
   /// [initialized] is used to ensure that the logging system is initialized only once.
   static bool initialized = false;
 
@@ -16,7 +16,7 @@ class LayrzLogging {
 
   /// [ensureInitialized] is used to initialize the logging system.
   static void ensureInitialized() {
-    LayrzLogging.initialized = true;
+    Log.initialized = true;
     FlutterError.onError = (FlutterErrorDetails details) {
       critical("${details.exceptionAsString()}\n${details.stack.toString()}");
     };
@@ -36,7 +36,7 @@ class LayrzLogging {
 
   static bool get isWeb => ThemedPlatform.isWeb || ThemedPlatform.isWebWasm;
 
-  static List<Log> logs = [];
+  static List<LogEntry> logs = [];
 
   static void debug(String message) {
     log(level: LogLevel.debug, message: message);
@@ -61,7 +61,7 @@ class LayrzLogging {
   static void log({required LogLevel level, required String message}) {
     if (kDebugMode || isWeb) debugPrint("[$level] $message");
 
-    final log = Log(
+    final log = LogEntry(
       level: level,
       message: message,
       timestamp: DateTime.now(),
@@ -86,14 +86,14 @@ class LayrzLogging {
   }
 
   static Future<List<String>> retreiveLogs() async {
-    List<Log> logList = [...logs];
+    List<LogEntry> logList = [...logs];
     logs.clear();
     if (_db != null) {
       final rows = await _db!.select(_db!.record).get();
       await _db!.delete(_db!.record).go();
       logList.addAll(
         rows.map((e) {
-          return Log(
+          return LogEntry(
             level: LogLevel.values.firstWhere(
               (element) => element.name == e.logLevel.toLowerCase(),
               orElse: () => LogLevel.info,
@@ -107,9 +107,33 @@ class LayrzLogging {
 
     return compute(_sortAndFormat, logList);
   }
+
+  /// [humanizeMicroseconds] is used to convert microseconds to a human-readable format.
+  ///
+  /// Examples:
+  /// - 500 -> "500μs"
+  /// - 1500 -> "1ms"
+  static String humanizeMicroseconds(int elapsed) {
+    if (elapsed < 1_000) {
+      return '$elapsedμs';
+    }
+    elapsed = elapsed ~/ 1_000;
+    if (elapsed < 1_000) {
+      return '${elapsed}ms';
+    }
+
+    elapsed = elapsed ~/ 1_000;
+    if (elapsed < 60) {
+      return '${elapsed}s';
+    }
+
+    elapsed = elapsed ~/ 60;
+    return '${elapsed}m';
+  }
 }
 
-Future<List<String>> _sortAndFormat(List<Log> logs) async {
+typedef LayrzLogging = Log;
+Future<List<String>> _sortAndFormat(List<LogEntry> logs) async {
   logs.sort((a, b) => a.timestamp.compareTo(b.timestamp));
   return logs.map((e) {
     final date = e.timestamp.toUtc();

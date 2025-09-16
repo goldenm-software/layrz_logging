@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0
+
+- Renamed `Log` class to `LogEntry` to avoid confusion with other packages.
+- Renamed `LayrzLogging` class to `Log` for simplicity.
+- Added an alias of `LayrzLogging` to `Log` for backward compatibility.
+- Added `humanizeMicroseconds` on class to convert microseconds to a human readable format.
+- Constraints updated to support Flutter 3.35.0 and Dart 3.9.0 as minimum versions.
+
 ## 1.1.0
 
 - Migrated to use `drift` instead of classic files and lists to store logs.
