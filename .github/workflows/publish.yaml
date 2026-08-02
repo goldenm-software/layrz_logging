@@ -1,0 +1,111 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  prechecks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Check tag format
+        run: |
+          if [[ ! "${GITHUB_REF}" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag ${GITHUB_REF} does not match required format vX.Y.Z"
+            exit 1
+          fi
+
+      - name: Check main branch
+        run: |
+          git fetch origin main
+
+          if ! git merge-base --is-ancestor ${GITHUB_SHA} origin/main; then
+            echo "Tag ${GITHUB_REF} is not based on the latest main branch"
+            exit 1
+          fi
+
+  deploy-dart:
+    needs: prechecks
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: stable
+          version: 3.44.2
+          cache: true
+          cache-sdk: true
+          cache-key: ${{ runner.os }}-flutter-${{ hashFiles('pubspec.yaml') }}
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Dry run
+        run: flutter pub publish --dry-run
+
+      - name: Publish to pub.dev
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Publish to pub.dev
+        run: flutter pub publish --force
+
+      - name: Rename tag when fails
+        if: failure()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          NEW_TAG="failed-${TAG_NAME}-${TIMESTAMP}"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+          git push --delete origin $TAG_NAME
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: deploy-dart
+    if: success()
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Fetch all history for changelog generation
+
+      - name: Generate changelog
+        id: changelog
+        uses: goldenm-software/layrz-actions/.github/actions/changelog@v1
+        with:
+          post-comment: false # Don't post comment for releases
+          exclude-types: "chore,style"
+          comment-header: "## 📋 Release Notes"
+
+      - name: Determine if pre-release
+        id: prerelease
+        run: |
+          TAG="${{ github.ref_name }}"
+          if [[ "$TAG" =~ (alpha|beta|rc) ]]; then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: Release ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: ${{ steps.prerelease.outputs.prerelease }}
+          token: ${{ secrets.GITHUB_TOKEN }}
