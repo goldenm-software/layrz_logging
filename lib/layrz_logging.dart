@@ -1,11 +1,16 @@
 import 'package:flutter/foundation.dart';
-import 'package:layrz_logging/src/models.dart';
+import 'package:layrz_logging/src/log_level.dart';
+import 'package:layrz_logging/src/log_entry.dart';
 import 'package:layrz_theme/layrz_theme.dart';
 
 import 'src/database/database.dart';
 
-export 'src/models.dart';
+export 'src/log_entry.dart';
+export 'src/log_level.dart';
 export 'src/preview.dart';
+
+import 'src/ansi_colors.dart';
+export 'src/ansi_colors.dart';
 
 class Log {
   /// [initialized] is used to ensure that the logging system is initialized only once.
@@ -39,27 +44,27 @@ class Log {
   static List<LogEntry> logs = [];
 
   static void debug(String message) {
-    log(level: LogLevel.debug, message: message);
+    log(level: .debug, message: message);
   }
 
   static void info(String message) {
-    log(level: LogLevel.info, message: message);
+    log(level: .info, message: message);
   }
 
   static void warning(String message) {
-    log(level: LogLevel.warning, message: message);
+    log(level: .warning, message: message);
   }
 
   static void error(String message) {
-    log(level: LogLevel.error, message: message);
+    log(level: .error, message: message);
   }
 
   static void critical(String message) {
-    log(level: LogLevel.critical, message: message);
+    log(level: .critical, message: message);
   }
 
   static void log({required LogLevel level, required String message}) {
-    if (kDebugMode || isWeb) debugPrint("[$level] $message");
+    if (kDebugMode || isWeb) debugPrint("${level.color}[$level] $message${AnsiColor.reset}");
 
     final log = LogEntry(
       level: level,

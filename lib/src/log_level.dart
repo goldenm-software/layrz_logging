@@ -1,19 +1,4 @@
-class LogEntry {
-  String message;
-  LogLevel level;
-  DateTime timestamp;
-
-  LogEntry({
-    required this.message,
-    required this.level,
-    required this.timestamp,
-  });
-
-  @override
-  String toString() {
-    return "[$level] $timestamp => $message";
-  }
-}
+import './ansi_colors.dart';
 
 enum LogLevel {
   debug,
@@ -37,6 +22,23 @@ enum LogLevel {
         return "CRITICAL";
       default:
         return "UNKNOWN";
+    }
+  }
+
+  String get color {
+    switch (this) {
+      case LogLevel.debug:
+        return AnsiColor.cyan;
+      case LogLevel.info:
+        return AnsiColor.reset;
+      case LogLevel.warning:
+        return AnsiColor.yellow;
+      case LogLevel.error:
+        return AnsiColor.red;
+      case LogLevel.critical:
+        return AnsiColor.magenta;
+      default:
+        return AnsiColor.reset;
     }
   }
 }

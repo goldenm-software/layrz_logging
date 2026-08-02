@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+- Added `AnsiColor` class to handle ANSI color codes for console output.
+- Updated `LogLevel` enum to include a `color` property that returns the corresponding ANSI color code for each log level.
+- Updated `Log` class to use the new `color` property when printing log messages to the console.
+
 ## 1.2.0
 
 - Renamed `Log` class to `LogEntry` to avoid confusion with other packages.
