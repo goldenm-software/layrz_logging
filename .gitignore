@@ -34,3 +34,5 @@ build/
 .vscode/settings.json
 
 .fvm/
+.metadata
+coverage/
