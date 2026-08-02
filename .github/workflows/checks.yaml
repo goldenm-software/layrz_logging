@@ -43,7 +43,7 @@ jobs:
         with:
           enable-dart: true
           dart-coverage-path: dart-coverage/lcov.info
-          threshold: '55'
+          threshold: '65'
 
   changelog:
     runs-on: ubuntu-latest

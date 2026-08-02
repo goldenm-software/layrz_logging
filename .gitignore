@@ -36,3 +36,4 @@ build/
 .fvm/
 .metadata
 coverage/
+lcov.info
