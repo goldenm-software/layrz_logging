@@ -11,12 +11,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  layrz_icons: any
   layrz_models: ^3.3.40
   layrz_theme: ^7.2.3
   drift: ^2.34.3
   drift_flutter: ^0.3.1
   path_provider: ^2.1.5
+  layrz_icons: any
   path: any
 
 dev_dependencies:
