@@ -11,31 +11,48 @@ class $RecordTable extends Record with TableInfo<$RecordTable, RecordData> {
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _logLevelMeta =
-      const VerificationMeta('logLevel');
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _logLevelMeta = const VerificationMeta(
+    'logLevel',
+  );
   @override
   late final GeneratedColumn<String> logLevel = GeneratedColumn<String>(
-      'log_level', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'log_level',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _entryMeta = const VerificationMeta('entry');
   @override
   late final GeneratedColumn<String> entry = GeneratedColumn<String>(
-      'entry', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _createdAtMeta =
-      const VerificationMeta('createdAt');
+    'entry',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
   @override
   late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-      'created_at', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      defaultValue: currentDateAndTime);
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
   @override
   List<GeneratedColumn> get $columns => [id, logLevel, entry, createdAt];
   @override
@@ -44,28 +61,36 @@ class $RecordTable extends Record with TableInfo<$RecordTable, RecordData> {
   String get actualTableName => $name;
   static const String $name = 'record';
   @override
-  VerificationContext validateIntegrity(Insertable<RecordData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<RecordData> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('log_level')) {
-      context.handle(_logLevelMeta,
-          logLevel.isAcceptableOrUnknown(data['log_level']!, _logLevelMeta));
+      context.handle(
+        _logLevelMeta,
+        logLevel.isAcceptableOrUnknown(data['log_level']!, _logLevelMeta),
+      );
     } else if (isInserting) {
       context.missing(_logLevelMeta);
     }
     if (data.containsKey('entry')) {
       context.handle(
-          _entryMeta, entry.isAcceptableOrUnknown(data['entry']!, _entryMeta));
+        _entryMeta,
+        entry.isAcceptableOrUnknown(data['entry']!, _entryMeta),
+      );
     } else if (isInserting) {
       context.missing(_entryMeta);
     }
     if (data.containsKey('created_at')) {
-      context.handle(_createdAtMeta,
-          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
     }
     return context;
   }
@@ -76,14 +101,22 @@ class $RecordTable extends Record with TableInfo<$RecordTable, RecordData> {
   RecordData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return RecordData(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      logLevel: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}log_level'])!,
-      entry: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}entry'])!,
-      createdAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      logLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}log_level'],
+      )!,
+      entry: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entry'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
     );
   }
 
@@ -98,11 +131,12 @@ class RecordData extends DataClass implements Insertable<RecordData> {
   final String logLevel;
   final String entry;
   final DateTime createdAt;
-  const RecordData(
-      {required this.id,
-      required this.logLevel,
-      required this.entry,
-      required this.createdAt});
+  const RecordData({
+    required this.id,
+    required this.logLevel,
+    required this.entry,
+    required this.createdAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -122,8 +156,10 @@ class RecordData extends DataClass implements Insertable<RecordData> {
     );
   }
 
-  factory RecordData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory RecordData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return RecordData(
       id: serializer.fromJson<int>(json['id']),
@@ -143,14 +179,17 @@ class RecordData extends DataClass implements Insertable<RecordData> {
     };
   }
 
-  RecordData copyWith(
-          {int? id, String? logLevel, String? entry, DateTime? createdAt}) =>
-      RecordData(
-        id: id ?? this.id,
-        logLevel: logLevel ?? this.logLevel,
-        entry: entry ?? this.entry,
-        createdAt: createdAt ?? this.createdAt,
-      );
+  RecordData copyWith({
+    int? id,
+    String? logLevel,
+    String? entry,
+    DateTime? createdAt,
+  }) => RecordData(
+    id: id ?? this.id,
+    logLevel: logLevel ?? this.logLevel,
+    entry: entry ?? this.entry,
+    createdAt: createdAt ?? this.createdAt,
+  );
   RecordData copyWithCompanion(RecordCompanion data) {
     return RecordData(
       id: data.id.present ? data.id.value : this.id,
@@ -199,8 +238,8 @@ class RecordCompanion extends UpdateCompanion<RecordData> {
     required String logLevel,
     required String entry,
     this.createdAt = const Value.absent(),
-  })  : logLevel = Value(logLevel),
-        entry = Value(entry);
+  }) : logLevel = Value(logLevel),
+       entry = Value(entry);
   static Insertable<RecordData> custom({
     Expression<int>? id,
     Expression<String>? logLevel,
@@ -215,11 +254,12 @@ class RecordCompanion extends UpdateCompanion<RecordData> {
     });
   }
 
-  RecordCompanion copyWith(
-      {Value<int>? id,
-      Value<String>? logLevel,
-      Value<String>? entry,
-      Value<DateTime>? createdAt}) {
+  RecordCompanion copyWith({
+    Value<int>? id,
+    Value<String>? logLevel,
+    Value<String>? entry,
+    Value<DateTime>? createdAt,
+  }) {
     return RecordCompanion(
       id: id ?? this.id,
       logLevel: logLevel ?? this.logLevel,
@@ -269,18 +309,20 @@ abstract class _$LoggingDb extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [record];
 }
 
-typedef $$RecordTableCreateCompanionBuilder = RecordCompanion Function({
-  Value<int> id,
-  required String logLevel,
-  required String entry,
-  Value<DateTime> createdAt,
-});
-typedef $$RecordTableUpdateCompanionBuilder = RecordCompanion Function({
-  Value<int> id,
-  Value<String> logLevel,
-  Value<String> entry,
-  Value<DateTime> createdAt,
-});
+typedef $$RecordTableCreateCompanionBuilder =
+    RecordCompanion Function({
+      Value<int> id,
+      required String logLevel,
+      required String entry,
+      Value<DateTime> createdAt,
+    });
+typedef $$RecordTableUpdateCompanionBuilder =
+    RecordCompanion Function({
+      Value<int> id,
+      Value<String> logLevel,
+      Value<String> entry,
+      Value<DateTime> createdAt,
+    });
 
 class $$RecordTableFilterComposer extends Composer<_$LoggingDb, $RecordTable> {
   $$RecordTableFilterComposer({
@@ -291,16 +333,24 @@ class $$RecordTableFilterComposer extends Composer<_$LoggingDb, $RecordTable> {
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get logLevel => $composableBuilder(
-      column: $table.logLevel, builder: (column) => ColumnFilters(column));
+    column: $table.logLevel,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get entry => $composableBuilder(
-      column: $table.entry, builder: (column) => ColumnFilters(column));
+    column: $table.entry,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
-      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$RecordTableOrderingComposer
@@ -313,16 +363,24 @@ class $$RecordTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get logLevel => $composableBuilder(
-      column: $table.logLevel, builder: (column) => ColumnOrderings(column));
+    column: $table.logLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get entry => $composableBuilder(
-      column: $table.entry, builder: (column) => ColumnOrderings(column));
+    column: $table.entry,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$RecordTableAnnotationComposer
@@ -347,20 +405,24 @@ class $$RecordTableAnnotationComposer
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
 
-class $$RecordTableTableManager extends RootTableManager<
-    _$LoggingDb,
-    $RecordTable,
-    RecordData,
-    $$RecordTableFilterComposer,
-    $$RecordTableOrderingComposer,
-    $$RecordTableAnnotationComposer,
-    $$RecordTableCreateCompanionBuilder,
-    $$RecordTableUpdateCompanionBuilder,
-    (RecordData, BaseReferences<_$LoggingDb, $RecordTable, RecordData>),
-    RecordData,
-    PrefetchHooks Function()> {
+class $$RecordTableTableManager
+    extends
+        RootTableManager<
+          _$LoggingDb,
+          $RecordTable,
+          RecordData,
+          $$RecordTableFilterComposer,
+          $$RecordTableOrderingComposer,
+          $$RecordTableAnnotationComposer,
+          $$RecordTableCreateCompanionBuilder,
+          $$RecordTableUpdateCompanionBuilder,
+          (RecordData, BaseReferences<_$LoggingDb, $RecordTable, RecordData>),
+          RecordData,
+          PrefetchHooks Function()
+        > {
   $$RecordTableTableManager(_$LoggingDb db, $RecordTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -369,49 +431,52 @@ class $$RecordTableTableManager extends RootTableManager<
               $$RecordTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$RecordTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> logLevel = const Value.absent(),
-            Value<String> entry = const Value.absent(),
-            Value<DateTime> createdAt = const Value.absent(),
-          }) =>
-              RecordCompanion(
-            id: id,
-            logLevel: logLevel,
-            entry: entry,
-            createdAt: createdAt,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String logLevel,
-            required String entry,
-            Value<DateTime> createdAt = const Value.absent(),
-          }) =>
-              RecordCompanion.insert(
-            id: id,
-            logLevel: logLevel,
-            entry: entry,
-            createdAt: createdAt,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> logLevel = const Value.absent(),
+                Value<String> entry = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => RecordCompanion(
+                id: id,
+                logLevel: logLevel,
+                entry: entry,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String logLevel,
+                required String entry,
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => RecordCompanion.insert(
+                id: id,
+                logLevel: logLevel,
+                entry: entry,
+                createdAt: createdAt,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$RecordTableProcessedTableManager = ProcessedTableManager<
-    _$LoggingDb,
-    $RecordTable,
-    RecordData,
-    $$RecordTableFilterComposer,
-    $$RecordTableOrderingComposer,
-    $$RecordTableAnnotationComposer,
-    $$RecordTableCreateCompanionBuilder,
-    $$RecordTableUpdateCompanionBuilder,
-    (RecordData, BaseReferences<_$LoggingDb, $RecordTable, RecordData>),
-    RecordData,
-    PrefetchHooks Function()>;
+typedef $$RecordTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LoggingDb,
+      $RecordTable,
+      RecordData,
+      $$RecordTableFilterComposer,
+      $$RecordTableOrderingComposer,
+      $$RecordTableAnnotationComposer,
+      $$RecordTableCreateCompanionBuilder,
+      $$RecordTableUpdateCompanionBuilder,
+      (RecordData, BaseReferences<_$LoggingDb, $RecordTable, RecordData>),
+      RecordData,
+      PrefetchHooks Function()
+    >;
 
 class $LoggingDbManager {
   final _$LoggingDb _db;
