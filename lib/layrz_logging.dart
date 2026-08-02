@@ -8,6 +8,7 @@ import 'src/database/database.dart';
 export 'src/log_entry.dart';
 export 'src/log_level.dart';
 export 'src/preview.dart';
+export 'src/database/database.dart';
 
 import 'src/ansi_colors.dart';
 export 'src/ansi_colors.dart';
@@ -34,6 +35,14 @@ class Log {
     /// In case that you want to store the logs in your own database, you can use
     /// the `Record` class on `layrz_logging` to use it as new table on your `drift` database
     ValueChanged<LogEntry>? onLog,
+
+    /// [database] is an optional [LoggingDb] instance.
+    ///
+    /// If provided, this database instance will be used instead of creating a new one.
+    /// Primarily useful for testing (e.g., to inject an in-memory database via
+    /// [NativeDatabase.memory()]) or for host applications that want to supply their own
+    /// database instance configured with custom settings.
+    LoggingDb? database,
   }) {
     Log.initialized = true;
     FlutterError.onError = (FlutterErrorDetails details) {
@@ -50,7 +59,7 @@ class Log {
     if (_onLog != null) return;
 
     try {
-      _db = LoggingDb();
+      _db = database ?? LoggingDb();
     } catch (e) {
       _db = null;
       debugPrint("Error initializing database: $e");
