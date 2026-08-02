@@ -8,6 +8,7 @@ import 'src/database/database.dart';
 export 'src/log_entry.dart';
 export 'src/log_level.dart';
 export 'src/preview.dart';
+export 'src/database/database.dart';
 
 import 'src/ansi_colors.dart';
 export 'src/ansi_colors.dart';
@@ -16,11 +17,33 @@ class Log {
   /// [initialized] is used to ensure that the logging system is initialized only once.
   static bool initialized = false;
 
+  /// [_onLog] is a callback that is called whenever a log is created.
+  static ValueChanged<LogEntry>? _onLog;
+
   /// [_db] is used to store logs in the database.
   static LoggingDb? _db;
 
   /// [ensureInitialized] is used to initialize the logging system.
-  static void ensureInitialized() {
+  static void ensureInitialized({
+    /// [onLog] is a callback that is called whenever a log is created.
+    ///
+    /// This callback repalces the default behavior of storing logs in the database or in memory.
+    ///
+    /// If you provide this callback, logs will not be stored in the database or in memory,
+    /// and you will be responsible for handling them.
+    ///
+    /// In case that you want to store the logs in your own database, you can use
+    /// the `Record` class on `layrz_logging` to use it as new table on your `drift` database
+    ValueChanged<LogEntry>? onLog,
+
+    /// [database] is an optional [LoggingDb] instance.
+    ///
+    /// If provided, this database instance will be used instead of creating a new one.
+    /// Primarily useful for testing (e.g., to inject an in-memory database via
+    /// [NativeDatabase.memory()]) or for host applications that want to supply their own
+    /// database instance configured with custom settings.
+    LoggingDb? database,
+  }) {
     Log.initialized = true;
     FlutterError.onError = (FlutterErrorDetails details) {
       critical("${details.exceptionAsString()}\n${details.stack.toString()}");
@@ -31,8 +54,12 @@ class Log {
       return true;
     };
 
+    _onLog = onLog;
+
+    if (_onLog != null) return;
+
     try {
-      _db = LoggingDb();
+      _db = database ?? LoggingDb();
     } catch (e) {
       _db = null;
       debugPrint("Error initializing database: $e");
@@ -72,6 +99,11 @@ class Log {
       timestamp: DateTime.now(),
     );
 
+    if (_onLog != null) {
+      _onLog!(log);
+      return;
+    }
+
     if (_db != null) {
       try {
         _db!
@@ -91,6 +123,10 @@ class Log {
   }
 
   static Future<List<String>> retreiveLogs() async {
+    if (_onLog != null) {
+      throw Exception("Cannot retreive logs when onLog is set.");
+    }
+
     List<LogEntry> logList = [...logs];
     logs.clear();
     if (_db != null) {

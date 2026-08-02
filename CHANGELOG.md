@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0
+
+- Added `onLog` callback to `LayrzLogging` class to allow users to handle logs in their own way, bypassing the default database and in-memory storage.
+
 ## 1.3.0
 
 - Added `AnsiColor` class to handle ANSI color codes for console output.
