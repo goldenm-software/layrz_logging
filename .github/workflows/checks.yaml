@@ -6,7 +6,7 @@ on:
     types: [opened, synchronize, reopened]
 
 env:
-  FLUTTER_VERSION: "3.44.8"
+  FLUTTER_VERSION: "3.47.0"
 
 jobs:
   lint-dart:
@@ -43,7 +43,7 @@ jobs:
         with:
           enable-dart: true
           dart-coverage-path: dart-coverage/lcov.info
-          threshold: '65'
+          threshold: '90'
 
   changelog:
     runs-on: ubuntu-latest
