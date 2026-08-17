@@ -10,3 +10,11 @@ formatter:
 analyzer:
   errors:
     unreachable_switch_default: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**

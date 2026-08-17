@@ -1,4 +1,4 @@
-import './ansi_colors.dart';
+import 'ansi_colors.dart';
 
 enum LogLevel {
   debug,
