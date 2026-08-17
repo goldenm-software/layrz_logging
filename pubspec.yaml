@@ -1,6 +1,6 @@
 name: layrz_logging
 description: "Logging system for Flutter applications"
-version: "1.4.0"
+version: "1.5.0"
 homepage: https://github.com/goldenm-software/layrz_logging
 
 environment:
@@ -11,20 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  layrz_models: ^3.3.40
-  layrz_theme: ^7.2.3
-  drift: ^2.34.3
-  drift_flutter: ^0.3.1
-  path_provider: ^2.1.5
-  layrz_icons: any
-  path: any
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  drift_dev: ^2.34.5
-  build_runner: ^2.15.1
 
 platforms:
   android:
