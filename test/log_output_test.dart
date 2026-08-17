@@ -13,9 +13,9 @@ void main() {
   late DebugPrintCapture capture;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
     capture = DebugPrintCapture();
     capture.start();
-    Log.logs.clear();
   });
 
   tearDown(() {
@@ -208,6 +208,117 @@ void main() {
         output[0],
         '${AnsiColor.red}[ERROR] $longMessage${AnsiColor.reset}',
       );
+    });
+  });
+
+  group('Error and StackTrace output', () {
+    test('emits additional debugPrint line when error is provided', () {
+      Log.error('error message', error: Exception('test error'));
+
+      final output = capture.getOutput();
+      expect(output.length, 2);
+      expect(output[0], '${AnsiColor.red}[ERROR] error message${AnsiColor.reset}');
+      expect(output[1], '${AnsiColor.red}Error: Exception: test error${AnsiColor.reset}');
+    });
+
+    test('emits additional debugPrint line when stackTrace is provided', () {
+      final testStack = StackTrace.current;
+      Log.warning('warning message', stackTrace: testStack);
+
+      final output = capture.getOutput();
+      expect(output.length, 2);
+      expect(output[0], '${AnsiColor.yellow}[WARNING] warning message${AnsiColor.reset}');
+      expect(output[1], contains(AnsiColor.yellow));
+      expect(output[1], contains(AnsiColor.reset));
+    });
+
+    test('emits separate debugPrint lines for error and stackTrace', () {
+      final testStack = StackTrace.current;
+      Log.critical('critical message', error: Exception('critical error'), stackTrace: testStack);
+
+      final output = capture.getOutput();
+      expect(output.length, 3);
+      expect(output[0], '${AnsiColor.magenta}[CRITICAL] critical message${AnsiColor.reset}');
+      expect(output[1], '${AnsiColor.magenta}Error: Exception: critical error${AnsiColor.reset}');
+      expect(output[2], contains(AnsiColor.magenta));
+    });
+
+    test('does not emit error/stackTrace lines when not provided', () {
+      Log.debug('debug message');
+
+      final output = capture.getOutput();
+      expect(output.length, 1);
+      expect(output[0], '${AnsiColor.cyan}[DEBUG] debug message${AnsiColor.reset}');
+    });
+
+    test('preserves level color for all diagnostic lines', () {
+      Log.info('info message', error: Exception('info error'));
+
+      final output = capture.getOutput();
+      expect(output.length, 2);
+      // Both lines should have reset color (info level)
+      expect(output[0], startsWith(AnsiColor.reset));
+      expect(output[1], startsWith(AnsiColor.reset));
+    });
+  });
+
+  group('LogEntry.toString() format', () {
+    test('toString() is unchanged when error and stackTrace are null', () {
+      final now = DateTime(2024, 1, 1, 12, 0, 0);
+      final entry = LogEntry(
+        message: 'test message',
+        level: LogLevel.info,
+        timestamp: now,
+      );
+
+      expect(entry.toString(), '[INFO] 2024-01-01 12:00:00.000 => test message');
+    });
+
+    test('toString() includes error when provided', () {
+      final now = DateTime(2024, 1, 1, 12, 0, 0);
+      final error = Exception('test error');
+      final entry = LogEntry(
+        message: 'test message',
+        level: LogLevel.error,
+        timestamp: now,
+        error: error,
+      );
+
+      expect(entry.toString(), contains('test message'));
+      expect(entry.toString(), contains('Error: Exception: test error'));
+    });
+
+    test('toString() includes stackTrace when provided', () {
+      final now = DateTime(2024, 1, 1, 12, 0, 0);
+      final testStack = StackTrace.current;
+      final entry = LogEntry(
+        message: 'test message',
+        level: LogLevel.warning,
+        timestamp: now,
+        stackTrace: testStack,
+      );
+
+      final str = entry.toString();
+      expect(str, contains('test message'));
+      expect(str, contains('#0'));
+    });
+
+    test('toString() includes both error and stackTrace when provided', () {
+      final now = DateTime(2024, 1, 1, 12, 0, 0);
+      final error = Exception('test error');
+      final testStack = StackTrace.current;
+      final entry = LogEntry(
+        message: 'test message',
+        level: LogLevel.critical,
+        timestamp: now,
+        error: error,
+        stackTrace: testStack,
+      );
+
+      final str = entry.toString();
+      expect(str, contains('test message'));
+      expect(str, contains('Error: Exception: test error'));
+      expect(str, contains('#0'));
     });
   });
 }
