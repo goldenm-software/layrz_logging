@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.5.0
+
+**Breaking:** this release removes public API. Applications on `^1.4.0` will
+need changes before upgrading.
+
+- Removed the drift/SQLite persistence layer. `LoggingDb`, `RecordData` and `RecordCompanion` are no longer exported — persisting logs is now the application's responsibility.
+- Removed `Log.logs` and `Log.retreiveLogs()`. Subscribe to the new `Log.stream` and store entries yourself instead.
+- Removed the `onLog` callback parameter from `Log.ensureInitialized()`. Subscribe to `Log.stream` instead.
+- Removed `PreviewLogDialog`.
+- Added `Log.stream`, a broadcast `Stream<LogEntry>` that emits every log entry. Note that broadcast streams do not replay: entries logged before you subscribe are not delivered, so subscribe during startup if you need early logs.
+- Added optional `error` and `stackTrace` arguments to `Log.log()` and to `debug()`, `info()`, `warning()`, `error()` and `critical()`. `LogEntry` now carries both.
+- The `FlutterError` and `PlatformDispatcher` error handlers now pass the error and stack trace structurally instead of concatenating them into the log message.
+- Dropped the `drift`, `drift_flutter`, `path_provider`, `path`, `layrz_icons` and `layrz_i18n` dependencies. The Flutter SDK is now the only runtime dependency.
+
 ## 1.4.0
 
 - Added `onLog` callback to `LayrzLogging` class to allow users to handle logs in their own way, bypassing the default database and in-memory storage.
