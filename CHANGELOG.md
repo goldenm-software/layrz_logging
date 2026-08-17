@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1
+
+- Removed `uses-material-design` from `pubspec.yaml` to avoid unnecessary Flutter dependency.
+
 ## 1.5.0
 
 **Breaking:** this release removes public API. Applications on `^1.4.0` will

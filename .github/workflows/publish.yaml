@@ -58,8 +58,12 @@ jobs:
       - name: Publish to pub.dev
         run: flutter pub publish --force
 
+  rename-tag-on-failure:
+    runs-on: ubuntu-latest
+    needs: deploy-dart
+    if: failure()
+    steps:
       - name: Rename tag when fails
-        if: failure()
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
