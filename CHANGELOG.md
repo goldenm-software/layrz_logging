@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0
+
+- Re-added alias `LayrzLogging` to `Log` for backward compatibility.
+
 ## 1.5.1
 
 - Removed `uses-material-design` from `pubspec.yaml` to avoid unnecessary Flutter dependency.
